@@ -7,6 +7,11 @@ import (
 	"os"
 )
 
+type application struct {
+	errorLog *log.Logger
+	infoLog *log.Logger
+}
+
 func main() {
 	// Define a new command-line flag with the name 'addr', a default value of ":4000"
 	// and some short help text explaining what the flag controls. The value of the
@@ -22,11 +27,17 @@ func main() {
 	// A logger for an error
 	errorLog := log.New(os.Stderr,"Error\t", log.Ldate|log.Ltime|log.Lshortfile)
 
+	app := &application{
+		errorLog: errorLog,
+		infoLog: infoLog,
+	}
+
+
 	// router / servermux
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", home)
-	mux.HandleFunc("/snippet", showSnippet)
-	mux.HandleFunc("/snippet/create", createSnippet)
+	mux.HandleFunc("/", app.home)
+	mux.HandleFunc("/snippet", app.showSnippet)
+	mux.HandleFunc("/snippet/create", app.createSnippet)
 
 	// Create a new File Serve
 	// Given relative path
