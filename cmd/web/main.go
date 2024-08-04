@@ -32,23 +32,10 @@ func main() {
 		infoLog: infoLog,
 	}
 
-
-	// router / servermux
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", app.home)
-	mux.HandleFunc("/snippet", app.showSnippet)
-	mux.HandleFunc("/snippet/create", app.createSnippet)
-
-	// Create a new File Serve
-	// Given relative path
-	fileServer := http.FileServer(http.Dir("./ui/static/"))
-	// Use the mux.Handle Function to register the file server as the handler
-	mux.Handle("/static/",http.StripPrefix("/static",fileServer))
-
 	srv := &http.Server{
 		Addr: *addr,
 		ErrorLog: errorLog,
-		Handler: mux,
+		Handler: app.routes(),
 	}
 
 	// Server
