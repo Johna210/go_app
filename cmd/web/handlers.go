@@ -50,7 +50,7 @@ func createSnippet(w http.ResponseWriter, r *http.Request) {
 		// w.WriteHeader(405)
 		// w.Write([]byte("Method Not Allowed"))
 		// The above two lines are the same as the following one line
-		http.Error(w, "Method Not Allowd", 405)
+		http.Error(w, "Method Not Allowd", http.StatusMethodNotAllowed)
 		return
 	}
 
