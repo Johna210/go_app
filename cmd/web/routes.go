@@ -1,14 +1,14 @@
 package main
 
-import "net/http"
+import (
+	"net/http"
 
-func (app *application) routes() *http.ServeMux {
+	"github.com/justinas/alice"
+)
+
+func (app *application) routes() http.Handler {
 	// router / servermux
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", app.home)
-	mux.HandleFunc("/snippet", app.showSnippet)
-	mux.HandleFunc("/snippet/view", app.snippetView)
-	mux.HandleFunc("/snippet/create", app.createSnippet)
 
 	// Create a new File Serve
 	// Given relative path
@@ -16,5 +16,14 @@ func (app *application) routes() *http.ServeMux {
 	// Use the mux.Handle Function to register the file server as the handler
 	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
 
-	return mux
+	mux.HandleFunc("/", app.home)
+	mux.HandleFunc("/snippet", app.showSnippet)
+	mux.HandleFunc("/snippet/view", app.snippetView)
+	mux.HandleFunc("/snippet/create", app.createSnippet)
+
+	// Create a middleware chain containing our 'standard' middleware
+	// which will be used for every request our application receives.
+	standard := alice.New(app.recoverPanic, app.logRequest, secureHeaders)
+
+	return standard.Then(mux)
 }
