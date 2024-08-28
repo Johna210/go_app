@@ -15,6 +15,7 @@ type templateData struct {
 	Form            any
 	Flash           string
 	IsAuthenticated bool
+	CSRFToken       string
 }
 
 func humanDate(t time.Time) string {
@@ -25,6 +26,13 @@ var functions = template.FuncMap{
 	"humanDate": humanDate,
 }
 
+// newTemplateCache creates a new template cache by parsing the template files in the specified directory.
+// It returns a map of template names to template pointers and an error if any occurred during the parsing process.
+// The template files are expected to be located in the "./ui/html/pages/" directory.
+// The base template file "./ui/html/base.tmpl" is parsed and added to each template set.
+// Additionally, any partial templates located in the "./ui/html/partials/" directory are also parsed and added to each template set.
+// The template files in the "./ui/html/pages/" directory are parsed individually and added to the cache with their respective names.
+// The cache is a map where the keys are the names of the template files and the values are the corresponding template pointers.
 func newTemplateCache() (map[string]*template.Template, error) {
 	cache := map[string]*template.Template{}
 
